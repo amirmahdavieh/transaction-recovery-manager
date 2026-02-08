@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS users (
+  user_id     BIGSERIAL PRIMARY KEY,
+  username    VARCHAR(64) UNIQUE NOT NULL,
+  pin_hash    VARCHAR(255) NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
