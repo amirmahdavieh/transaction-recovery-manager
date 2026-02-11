@@ -44,4 +44,26 @@ public final class Db {
             return rs.getInt(1);
         }
     }
+
+    public static <T> T inTransaction(SqlFunction<Connection, T> work) throws Exception {
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                T result = work.apply(conn);
+                conn.commit();
+                return result;
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    @FunctionalInterface
+    public interface SqlFunction<C, R> {
+        R apply(C conn) throws Exception;
+    }
+
 }
